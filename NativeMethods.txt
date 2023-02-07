@@ -9,3 +9,4 @@ WINDOW_EX_STYLE
 WINDOW_LONG_PTR_INDEX
 GetWindow
 EnumWindows
+ShowWindow

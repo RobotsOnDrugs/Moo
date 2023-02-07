@@ -21,7 +21,6 @@ public partial class App : Application
 	public override void OnFrameworkInitializationCompleted()
 	{
 		MainWindow mwindow = null!;
-		ToastNotificationManagerCompat.History.Clear();
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
 			if (desktop.Args.Length != 0 && desktop.Args[0] is "-ToastActivated")
@@ -30,7 +29,7 @@ public partial class App : Application
 					proc.Kill();
 				desktop.MainWindow = new MainWindow();
 				mwindow = (MainWindow)desktop.MainWindow;
-				_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
+				_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)WINDOW_EX_STYLE.WS_EX_TOOLWINDOW);
 			}
 			else
 				Notify();
@@ -42,6 +41,7 @@ public partial class App : Application
 	}
 	private static void Notify()
 	{
+		ToastNotificationManagerCompat.History.Clear();
 		Console.WriteLine("Notifications started.");
 		ToastContentBuilder toastbuilder = new ToastContentBuilder()
 			.AddText("You need important updates.")
