@@ -29,7 +29,7 @@ public partial class App : Application
 					proc.Kill();
 				desktop.MainWindow = new MainWindow();
 				mwindow = (MainWindow)desktop.MainWindow;
-				_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)WINDOW_EX_STYLE.WS_EX_TOOLWINDOW);
+				_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
 			}
 			else
 				Notify();
