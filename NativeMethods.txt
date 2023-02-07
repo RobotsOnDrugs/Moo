@@ -1,0 +1,11 @@
+CloseWindow
+ClipCursor
+SetCursor
+GetClientRect
+GetDesktopWindow
+GetWindowLongPtr
+SetWindowLongPtr
+WINDOW_EX_STYLE
+WINDOW_LONG_PTR_INDEX
+GetWindow
+EnumWindows
