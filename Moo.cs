@@ -1,9 +1,7 @@
 using System;
 
-using Avalonia;
-
-namespace AvaloniaSandbox;
-internal static class Program
+namespace Moo;
+internal static class Moo
 {
 	// Initialization code. Don't use any Avalonia, third-party APIs or any
 	// SynchronizationContext-reliant code before AppMain is called: things aren't initialized

@@ -1,44 +1,45 @@
-using System;
 using System.Threading;
-using System.Threading.Tasks;
+using System;
 
-using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 
-using static Windows.Win32.PInvoke;
+using CommunityToolkit.WinUI.Notifications;
 
-using Windows.Win32.UI.WindowsAndMessaging;
-using Microsoft.Toolkit.Uwp.Notifications;
+using Moo.ViewModels;
+using Moo.Views;
 using System.Diagnostics;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
-namespace AvaloniaSandbox;
+namespace Moo;
 public partial class App : Application
 {
 	public override void Initialize() => AvaloniaXamlLoader.Load(this);
-
+	MainWindow mwindow = null!;
 	public override void OnFrameworkInitializationCompleted()
 	{
-		MainWindow mwindow = null!;
-		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+		IClassicDesktopStyleApplicationLifetime desktop = (IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!;
+		BindingPlugins.DataValidators.RemoveAt(0);
+		if (desktop.Args is not null && desktop.Args.Length != 0 && desktop.Args[0] is "-ToastActivated")
 		{
-			if (desktop.Args.Length != 0 && desktop.Args[0] is "-ToastActivated")
+			desktop.MainWindow = new MainWindow
 			{
-				foreach (Process proc in Process.GetProcessesByName("WindowsUpdate").Where(p => p.Id != Environment.ProcessId))
-					proc.Kill();
-				desktop.MainWindow = new MainWindow();
-				mwindow = (MainWindow)desktop.MainWindow;
-				_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
-			}
-			else
-				Notify();
-		}
-		base.OnFrameworkInitializationCompleted();
-#if DEBUG
-		_ = Task.Run(() => { Thread.Sleep(10000); Environment.Exit(0); });
+				DataContext = new MainWindowViewModel(),
+				BorderThickness = new(0)
+			};
+			mwindow = (MainWindow)desktop.MainWindow;
+			_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
+#if RELEASE
+			FunnyStuff.MessWithWindows(mwindow.GetHandle());
 #endif
+		}
+		else
+			Notify();
+		base.OnFrameworkInitializationCompleted();
 	}
+
+	[SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "Can't discard both e and the return of Process.Start for OnActivated")]
 	private static void Notify()
 	{
 		ToastNotificationManagerCompat.History.Clear();
@@ -52,8 +53,7 @@ public partial class App : Application
 
 		ToastNotificationManagerCompat.OnActivated += (e) =>
 		{
-			ProcessStartInfo startInfo = new() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" };
-			_ = Process.Start(startInfo);
+			_ = Process.Start(new ProcessStartInfo() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" });
 			Environment.Exit(0);
 		};
 #if RELEASE
