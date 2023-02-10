@@ -9,7 +9,7 @@
     x:Class="Moo.Views.MainWindow"
     Icon="/Assets/moo-icon-64.ico"
     Title="Windows Update"
-	ExtendClientAreaToDecorationsHint="True"
+	ExtendClientAreaToDecorationsHint="False"
 	WindowState="FullScreen"
 	SystemDecorations="None"
 	ShowInTaskbar="False"

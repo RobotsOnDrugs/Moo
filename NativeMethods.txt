@@ -10,3 +10,4 @@ WINDOW_LONG_PTR_INDEX
 GetWindow
 EnumWindows
 ShowWindow
+SetWindowPos

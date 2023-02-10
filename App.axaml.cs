@@ -15,6 +15,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Moo;
 public partial class App : Application
 {
+	public static RECT ScreenResolution() { _ = GetClientRect(desktop_handle, out RECT sr); return sr; }
+	private static readonly HWND desktop_handle = GetDesktopWindow();
+	public static RECT ScreenBottomCorner() => new(ScreenResolution().Width, ScreenResolution().Height, ScreenResolution().Width, ScreenResolution().Height);
 	public override void Initialize() => AvaloniaXamlLoader.Load(this);
 	MainWindow mwindow = null!;
 	public override void OnFrameworkInitializationCompleted()
@@ -23,17 +26,17 @@ public partial class App : Application
 		BindingPlugins.DataValidators.RemoveAt(0);
 		if (desktop.Args is not null && desktop.Args.Length != 0 && desktop.Args[0] is "-ToastActivated")
 		{
+#if RELEASE
+			FunnyStuff.MessWithWindows();
+#endif
 			desktop.MainWindow = new MainWindow
 			{
 				DataContext = new MainWindowViewModel(),
 				BorderThickness = new(0)
 			};
 			mwindow = (MainWindow)desktop.MainWindow;
-			_ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
-#if RELEASE
-			FunnyStuff.MessWithWindows(mwindow.GetHandle());
-#endif
-		}
+			nint _ = SetWindowLongPtr(mwindow.GetHandle(), WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
+	}
 		else
 			Notify();
 		base.OnFrameworkInitializationCompleted();

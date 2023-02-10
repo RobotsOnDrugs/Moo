@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Avalonia.Input;
@@ -9,12 +10,15 @@ namespace Moo.Views;
 public partial class MainWindow : Window
 {
 	private int AltKeyPressed = 0;
-	partial void InitializeComponent();
 	public MainWindow()
 	{
 		KeyUp += ExitWithAlt;
 #if RELEASE
+		LostFocus += (_, _) => Persist();
+		PointerCaptureLost += (_, _) => Persist();
+		Activated += (_, _) => Persist();
 		Closing += (_, e) => e.Cancel = true;
+		Closed += (_, _) => Activate();
 #endif
 		InitializeComponent();
 		Dispatcher.UIThread.InvokeAsync(MakeProgress);
@@ -58,5 +62,15 @@ public partial class MainWindow : Window
 			ptb.Text = $"{progress_percentage}% complete";
 		}
 	}
+#if RELEASE
+	private void Persist()
+	{
+		FunnyStuff.MessWithWindows();
+		HWND hwnd = GetHandle();
+		_ = SetWindowPos(GetHandle(), (HWND)(-1), 0, 0, App.ScreenResolution().Width, App.ScreenResolution().Height, SET_WINDOW_POS_FLAGS.SWP_SHOWWINDOW);
+		_ = ClipCursor(App.ScreenBottomCorner());
+		_ = SetCursor(null);
+	}
+#endif
 	public HWND GetHandle() => (HWND)PlatformImpl!.Handle.Handle;
 }
