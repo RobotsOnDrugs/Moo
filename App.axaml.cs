@@ -1,16 +1,12 @@
-using System.Threading;
-using System;
-
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 
-using CommunityToolkit.WinUI.Notifications;
+using Microsoft.Toolkit.Uwp.Notifications;
 
-using Moo.ViewModels;
-using Moo.Views;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
 
 namespace Moo;
 public partial class App : Application
@@ -45,27 +41,44 @@ public partial class App : Application
 	[SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "Can't discard both e and the return of Process.Start for OnActivated")]
 	private static void Notify()
 	{
-		ToastNotificationManagerCompat.History.Clear();
-		Console.WriteLine("Notifications started.");
-		ToastContentBuilder toastbuilder = new ToastContentBuilder()
-			.AddText("You need important updates.")
-			.AddText("Windows will install important updates and restart automatically.")
-			.SetToastDuration(ToastDuration.Long);
-		toastbuilder.Show();
-
-		ToastNotificationManagerCompat.OnActivated += (e) =>
-		{
-			_ = Process.Start(new ProcessStartInfo() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" });
-			Environment.Exit(0);
-		};
 #if RELEASE
 		const int duration = 60 * 1000;
 #else
 		const int duration = 10 * 1000;
 #endif
-		Thread.Sleep(duration);
-		//ProcessStartInfo startInfo = new() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" };
-		//_ = Process.Start(startInfo);
-		Environment.Exit(0);
+		Task sleeper = Task.Run(() => Thread.Sleep(duration));
+		ToastNotificationHistoryCompat history = ToastNotificationManagerCompat.History;
+		ToastNotificationManagerCompat.History.Clear();
+		Console.WriteLine("Notifications started.");
+		ToastContentBuilder toastbuilder = new ToastContentBuilder()
+			.AddText("You need important updates.")
+			.AddText("Windows will install important updates and restart automatically.")
+			.AddButton("Update Now", ToastActivationType.Background, "-ToastActivated")
+			.AddButton("Update Later", ToastActivationType.Background, "-ToastActivated")
+			.SetToastScenario(ToastScenario.Alarm);
+		XmlDocument toast_xml = toastbuilder.GetXml();
+		ToastNotification toast = new(toast_xml);
+		ToastNotificationManagerCompat.CreateToastNotifier().Show(toast);
+		void RespawnToast(ToastNotification t, object _) => RespawnToastInternal(ref toast, toast_xml);
+		toast.Dismissed += RespawnToast;
+		toast.Activated += RestartwithMainWindow;
+
+		void RespawnToastInternal(ref ToastNotification old_toast, XmlDocument toast_xml)
+		{
+			Console.WriteLine("test");
+			ToastNotificationManagerCompat.History.Clear();
+			old_toast = new(toast_xml);
+			old_toast.Dismissed -= RespawnToast;
+			old_toast.Dismissed += RespawnToast;
+			toast.Activated -= RestartwithMainWindow;
+			toast.Activated += RestartwithMainWindow;
+			ToastNotificationManagerCompat.CreateToastNotifier().Show(old_toast);
+		}
+		void RestartwithMainWindow(ToastNotification _, object o)
+		{
+			ToastNotificationManagerCompat.History.Clear();
+			Process? p = Process.Start(new ProcessStartInfo() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" });
+			Environment.Exit(0);
+		}
 	}
 }

@@ -1,8 +1,4 @@
-using System;
-
 using Avalonia.Controls.Templates;
-
-using Moo.ViewModels;
 
 namespace Moo;
 public class ViewLocator : IDataTemplate

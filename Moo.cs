@@ -1,5 +1,3 @@
-using System;
-
 namespace Moo;
 internal static class Moo
 {
