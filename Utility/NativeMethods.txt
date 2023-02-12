@@ -5,6 +5,8 @@ GetClientRect
 GetDesktopWindow
 GetWindowLongPtr
 SetWindowLongPtr
+GetWindowText
+WINDOW_STYLE
 WINDOW_EX_STYLE
 WINDOW_LONG_PTR_INDEX
 GetWindow
@@ -13,4 +15,12 @@ ShowWindow
 SetWindowPos
 DwmExtendFrameIntoClientArea
 SetLayeredWindowAttributes
+GetProcessInformation
+EnumDisplayMonitors
+GetMonitorInfo
+MONITORINFOF_PRIMARY
+GetDCEx
+SetBkColor
+BeginPaint
+EndPaint
 SendInput

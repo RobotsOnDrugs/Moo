@@ -50,8 +50,7 @@ public partial class App : Application
 		ToastContentBuilder toastbuilder = new ToastContentBuilder()
 			.AddText("You need important updates.")
 			.AddText("Windows will install important updates and restart automatically.")
-			.SetBackgroundActivation()
-			.SetToastScenario(ToastScenario.Reminder);
+			.SetToastDuration(ToastDuration.Long);
 		toastbuilder.Show();
 
 		ToastNotificationManagerCompat.OnActivated += (e) =>
@@ -65,8 +64,8 @@ public partial class App : Application
 		const int duration = 10 * 1000;
 #endif
 		Thread.Sleep(duration);
-		ProcessStartInfo startInfo = new() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" };
-		_ = Process.Start(startInfo);
+		//ProcessStartInfo startInfo = new() { FileName = Environment.ProcessPath, WindowStyle = ProcessWindowStyle.Hidden, Arguments = "-ToastActivated" };
+		//_ = Process.Start(startInfo);
 		Environment.Exit(0);
 	}
 }
