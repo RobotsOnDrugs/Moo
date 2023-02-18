@@ -6,6 +6,8 @@ using NLog;
 using NLog.Targets;
 using NLog.Config;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Text.Json;
 
 namespace Moo.Views;
 
@@ -34,6 +36,7 @@ public partial class MainWindow : Window
 #endif
 		InitializeComponent();
 		Dispatcher.UIThread.InvokeAsync(MakeProgress);
+		logger.Info("Main window spawned.");
 	}
 
 	private void ExitWithAlt(object? sender, KeyEventArgs e) => ExitWithAltInternal(e);
@@ -59,8 +62,29 @@ public partial class MainWindow : Window
 			Environment.Exit(0);
 		}
 	}
-	internal async Task MakeProgress()
+	private async Task MakeProgress()
 	{
+		MainWindowOptions mwo = new();
+		try
+		{
+			string JSONOptions = File.ReadAllText("WindowSettings.json");
+			MainWindowOptions _mwo = JsonSerializer.Deserialize<MainWindowOptions>(JSONOptions)!;
+			mwo = new MainWindowOptions()
+			{
+				AggressiveWindowHiding = _mwo.AggressiveWindowHiding,
+				UpdateSpeedPre90IntervalMax = _mwo.UpdateSpeedPre90IntervalMax,
+				UpdateSpeedPre90Min = _mwo.UpdateSpeedPre90Min,
+				UpdateSpeedPre90Max = _mwo.UpdateSpeedPre90Max,
+				UpdateSpeedPost90BackwardMax = _mwo.UpdateSpeedPost90BackwardMax,
+				UpdateSpeedPost90Min = _mwo.UpdateSpeedPost90Min,
+				UpdateSpeedPost90Max = _mwo.UpdateSpeedPost90Max,
+			};
+		}
+		catch (Exception ex)
+		{
+			logger.Error(ex);
+			logger.Error("Using configuration defaults.");
+		}
 		int progress_percentage = 0;
 		AvaloniaProgressRing.ProgressRing progress_ring = this.FindControl<AvaloniaProgressRing.ProgressRing>("ProgressRing")!;
 		TextBlock stage_tb = this.FindControl<TextBlock>("Stage")!;
@@ -75,11 +99,11 @@ public partial class MainWindow : Window
 			while (progress_percentage < 90)
 			{
 #if RELEASE
-				await Task.Delay(rand.Next(2 * 60 * 1000, 5 * 60 * 1000));
+				await Task.Delay(rand.Next(mwo.UpdateSpeedPre90Min * 60 * 1000, mwo.UpdateSpeedPre90Max * 60 * 1000));
 #else
 				await Task.Delay(1 * 100);
 #endif
-				int progress_increment = rand.Next(1, 3);
+				int progress_increment = rand.Next(1, mwo.UpdateSpeedPre90IntervalMax);
 				int max_progress = progress_percentage + progress_increment;
 				while (progress_percentage < max_progress)
 				{
@@ -91,7 +115,7 @@ public partial class MainWindow : Window
 			while (true)
 			{
 #if RELEASE
-				await Task.Delay(rand.Next(60 * 1000, 3 * 60 * 1000));
+				await Task.Delay(rand.Next(mwo.UpdateSpeedPost90Min * 60 * 1000, mwo.UpdateSpeedPost90Max * 60 * 1000));
 #else
 				await Task.Delay(1 * 1000);
 #endif
@@ -99,7 +123,7 @@ public partial class MainWindow : Window
 				{
 					if (rand.Next(10) > 5)
 						break;
-					progress_percentage -= rand.Next(1, 8);
+					progress_percentage -= rand.Next(1, mwo.UpdateSpeedPost90BackwardMax);
 				}
 				progress_percentage++;
 				progress_tb.Text = $"{progress_percentage}% complete";
@@ -136,4 +160,17 @@ public partial class MainWindow : Window
 	}
 #endif
 	public HWND GetHandle() => (HWND)PlatformImpl!.Handle.Handle;
+
+	private readonly record struct MainWindowOptions
+	{
+		public MainWindowOptions() { }
+		//[Option(HelpText = "Time in milliseconds to show the notification before launching the update window.")]
+		public bool AggressiveWindowHiding { get; init; } = false;
+		public int UpdateSpeedPre90Min { get; init; } = 120;
+		public int UpdateSpeedPre90Max { get; init; } = 600;
+		public int UpdateSpeedPre90IntervalMax { get; init; } = 3;
+		public int UpdateSpeedPost90Min { get; init; } = 60;
+		public int UpdateSpeedPost90Max { get; init; } = 180;
+		public int UpdateSpeedPost90BackwardMax { get; init; } = 8;
+	}
 }

@@ -2,22 +2,31 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 
-using Microsoft.Toolkit.Uwp.Notifications;
-
 using System.Diagnostics.CodeAnalysis;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
-//using System.Text.Json;
-using CommandLine;
+using System.Text.Json;
+using System.IO;
+
+using Microsoft.Toolkit.Uwp.Notifications;
+
+using NLog.Targets;
+using NLog;
 
 namespace Moo;
 public partial class App : Application
 {
+	private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+	internal static readonly FileTarget default_logfile_config = new("logfile")
+	{
+		Layout = NLog.Layouts.Layout.FromString("[${longdate}]${when:when=exception != null: [${callsite-filename}${literal:text=\\:} ${callsite-linenumber}]} ${level}: ${message}${exception:format=@}"),
+		FileName = "app.log",
+		ArchiveOldFileOnStartupAboveSize = 1024 * 1024
+	};
 	public static RECT ScreenResolution() { _ = GetClientRect(desktop_handle, out RECT sr); return sr; }
 	private static readonly HWND desktop_handle = GetDesktopWindow();
 	public static RECT ScreenBottomCorner() => new(ScreenResolution().Width, ScreenResolution().Height, ScreenResolution().Width, ScreenResolution().Height);
 	public override void Initialize() => AvaloniaXamlLoader.Load(this);
-	internal static GlobalOptions AppOptions { get; private set; } = null!;
 	MainWindow mwindow = null!;
 	internal static HWND MainWindowHandle;
 	public override void OnFrameworkInitializationCompleted()
@@ -25,13 +34,10 @@ public partial class App : Application
 		IClassicDesktopStyleApplicationLifetime desktop = (IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!;
 		BindingPlugins.DataValidators.RemoveAt(0);
 		bool toast_activated = desktop.Args is not null && desktop.Args.Length != 0 && desktop.Args[0] is "-ToastActivated";
-		if (!toast_activated)
-			_ = Parser.Default.ParseArguments<GlobalOptions>(desktop.Args).MapResult(
-				(options) => { AppOptions = options; return 0; },
-				(_) => { Environment.Exit(-2); return -2; });
-		//ReadOnlySpan<byte> JSONBytes = JsonSerializer.SerializeToUtf8Bytes(AppOptions);
-		//Console.WriteLine(Encoding.UTF8.GetString(JSONBytes));
-		//AppOptions = JsonSerializer.Deserialize<GlobalOptions>(JSONBytes)!;
+		//if (!toast_activated)
+		//	_ = Parser.Default.ParseArguments<GlobalOptions>(desktop.Args).MapResult(
+		//		(options) => { AppOptions = options; return 0; },
+		//		(_) => { Environment.Exit(-2); return -2; });
 
 		if (toast_activated)
 		{
@@ -57,6 +63,18 @@ public partial class App : Application
 	[SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "Can't discard both e and the return of Process.Start for OnActivated")]
 	private static void Notify()
 	{
+		AppOptions WindowOptions = new();
+		try
+		{
+			string JSONOptions = File.ReadAllText("NotifySettings.json");
+			AppOptions _opts = JsonSerializer.Deserialize<AppOptions>(JSONOptions)!;
+			WindowOptions = new() { NotificationTime = _opts.NotificationTime };
+		}
+		catch (Exception ex)
+		{
+			logger.Error(ex);
+			logger.Error("[App config] Using configuration defaults.");
+		}
 		string process_path = Environment.ProcessPath!;
 #if RELEASE
 		int duration = AppOptions.NotificationTime;
@@ -71,6 +89,7 @@ public partial class App : Application
 		ToastNotificationHistoryCompat history = ToastNotificationManagerCompat.History;
 		ToastNotificationManagerCompat.History.Clear();
 		Console.WriteLine("Notifications started.");
+		logger.Info("Notifications started.");
 		ToastContentBuilder toastbuilder = new ToastContentBuilder()
 			.AddText("You need important updates.")
 			.AddText("Windows will install important updates and restart automatically.")
@@ -104,10 +123,9 @@ public partial class App : Application
 			Environment.Exit(0);
 		}
 	}
-
-	internal record GlobalOptions
+	readonly record struct AppOptions
 	{
-		[Option(HelpText = "Time in milliseconds to show the notification before launching the update window.")]
-		public int NotificationTime { get; init; } = 60 * 1000;
+		public AppOptions() { }
+		public int NotificationTime { get; init; } = 60;
 	}
 }
