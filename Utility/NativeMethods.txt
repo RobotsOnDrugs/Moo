@@ -10,6 +10,7 @@ WINDOW_STYLE
 WINDOW_EX_STYLE
 WINDOW_LONG_PTR_INDEX
 GetWindow
+GetWindowInfo
 EnumWindows
 ShowWindow
 SetWindowPos

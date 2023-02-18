@@ -9,7 +9,7 @@ public static partial class MooUtilities
 	[LibraryImport("user32.dll")]
 	public static partial uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
-	public static void Main(string[] args)
+	public static void Main()
 	{
 		WNDENUMPROC window_info_callback = new(GetWindowInfo);
 		BOOL windowsenumed = EnumWindows(window_info_callback, (LPARAM)0);
@@ -35,9 +35,6 @@ public static partial class MooUtilities
 		uint owner_thread_id = GetWindowThreadProcessId((nint)owner_hwnd, out uint owner_id);
 		Process owner_process = Process.GetProcessById((int)owner_id);
 		int thread_id = (int)GetWindowThreadProcessId((nint)hwnd, out uint id);
-		//Process process = Process.GetProcessById((int)id);
-		//if (!owner_process.MainWindowTitle.Contains("teamviewer", StringComparison.OrdinalIgnoreCase))
-		//	return false;
 		if (WindowHandles.TryGetValue(id, out HashSet<HWND>? children))
 			return children.Add(hwnd);
 		WindowHandles[id] = new HashSet<HWND>() { hwnd };

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33402.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moo", "Moo.csproj", "{A938D3A7-EE39-466E-AE8F-409DA078CC48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moo.Utilities", "Utility\Moo.Utilities.csproj", "{D997D62E-B212-4BD7-9060-B965E678D0C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moo.Utilities", "Utility\Moo.Utilities.csproj", "{D997D62E-B212-4BD7-9060-B965E678D0C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,7 @@ Global
 		{D997D62E-B212-4BD7-9060-B965E678D0C8}.Debug|x64.ActiveCfg = Debug|x64
 		{D997D62E-B212-4BD7-9060-B965E678D0C8}.Debug|x64.Build.0 = Debug|x64
 		{D997D62E-B212-4BD7-9060-B965E678D0C8}.Release|x64.ActiveCfg = Release|x64
+		{D997D62E-B212-4BD7-9060-B965E678D0C8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,4 @@
-CloseWindow
+//CloseWindow
 ClipCursor
 SetCursor
 GetClientRect
@@ -7,10 +7,13 @@ GetWindowLongPtr
 SetWindowLongPtr
 WINDOW_EX_STYLE
 WINDOW_LONG_PTR_INDEX
-GetWindow
+//GetWindow
+GetWindowInfo
 EnumWindows
 ShowWindow
 SetWindowPos
+//SetParent
 DwmExtendFrameIntoClientArea
 SetLayeredWindowAttributes
-SendInput
+//SendInput
+ExitWindowsEx
