@@ -77,7 +77,7 @@ public partial class App : Application
 		}
 		string process_path = Environment.ProcessPath!;
 #if RELEASE
-		int duration = AppOptions.NotificationTime;
+		int duration = WindowOptions.NotificationTime;
 #else
 		const int duration = 10 * 1000;
 #endif
