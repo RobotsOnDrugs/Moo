@@ -1,5 +1,5 @@
 {
-	"AggressiveWindowHiding": false,
+	"AggressiveWindowHiding": true,
 	"UpdateSpeedPre90Min": 120,
 	"UpdateSpeedPre90Max": 600,
 	"UpdateSpeedPre90IntervalMax": 3,

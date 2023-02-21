@@ -7,6 +7,8 @@ global using System.Diagnostics;
 global using System.Threading.Tasks;
 
 global using static Windows.Win32.PInvoke;
+//global using Vanara.PInvoke;
+//global using static Vanara.PInvoke.User32;
 global using Windows.Win32.Foundation;
 global using Windows.Win32.UI.WindowsAndMessaging;
 

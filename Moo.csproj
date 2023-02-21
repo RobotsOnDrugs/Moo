@@ -52,6 +52,7 @@
 	</PackageReference>
 	<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
 	<PackageReference Include="NLog" Version="5.1.1" />
+	<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.13" />
 	<PackageReference Include="VirtualDesktop" Version="5.0.5" />
 	<PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
 	<PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.0-preview20230206001" />
@@ -60,7 +61,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="NotifySettings.json">
+    <None Update="AppSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SettingsReadme.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="WindowSettings.json">

@@ -1,13 +1,13 @@
-using Windows.Win32.System.Shutdown;
-
 using Avalonia.Input;
 using Avalonia.Threading;
 using NLog;
 using NLog.Targets;
-using NLog.Config;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Text.Json;
+#if RELEASE
+using System.Runtime.InteropServices;
+using Windows.Win32.System.Shutdown;
+#endif
 
 namespace Moo.Views;
 
@@ -15,6 +15,9 @@ public partial class MainWindow : Window
 {
 	private int AltKeyPressed = 0;
 	private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+	internal bool AggressiveWindowHiding => WindowOptions.AggressiveWindowHiding;
+	private MainWindowOptions WindowOptions { get; init; }
+	private Action UndoWindowHide { get; init; }
 	internal static readonly FileTarget default_logfile_config = new("logfile")
 	{
 		Layout = NLog.Layouts.Layout.FromString("[${longdate}]${when:when=exception != null: [${callsite-filename}${literal:text=\\:} ${callsite-linenumber}]} ${level}: ${message}${exception:format=@}"),
@@ -23,9 +26,28 @@ public partial class MainWindow : Window
 	};
 	public MainWindow()
 	{
-		LoggingConfiguration config = new();
-		config.AddRule(LogLevel.Info, LogLevel.Fatal, default_logfile_config);
-		LogManager.Configuration = config;
+		LogManager.Configuration.AddRule(LogLevel.Info, LogLevel.Fatal, default_logfile_config);
+		try
+		{
+			string JSONOptions = File.ReadAllText("WindowSettings.json");
+			MainWindowOptions _mwo = JsonSerializer.Deserialize<MainWindowOptions>(JSONOptions)!;
+			WindowOptions = new MainWindowOptions()
+			{
+				AggressiveWindowHiding = _mwo.AggressiveWindowHiding,
+				UpdateSpeedPre90IntervalMax = _mwo.UpdateSpeedPre90IntervalMax,
+				UpdateSpeedPre90Min = _mwo.UpdateSpeedPre90Min,
+				UpdateSpeedPre90Max = _mwo.UpdateSpeedPre90Max,
+				UpdateSpeedPost90BackwardMax = _mwo.UpdateSpeedPost90BackwardMax,
+				UpdateSpeedPost90Min = _mwo.UpdateSpeedPost90Min,
+				UpdateSpeedPost90Max = _mwo.UpdateSpeedPost90Max,
+			};
+		}
+		catch (Exception ex)
+		{
+			logger.Error(ex);
+			logger.Error("[MainWindow] Using configuration defaults.");
+		}
+		UndoWindowHide = WindowOptions.AggressiveWindowHiding ? FunnyStuff.UnfuckWindows : FunnyStuff.UnhideWindows;
 		KeyUp += ExitWithAlt;
 #if RELEASE
 		LostFocus += (_, _) => Persist();
@@ -53,8 +75,8 @@ public partial class MainWindow : Window
 			KeyUp -= ExitWithAlt;
 			try
 			{
-				logger.Info("Calling UnhideWindows");
-				FunnyStuff.UnhideWindows();
+				logger.Info("[MainWindow] Undoing window damage.");
+				UndoWindowHide();
 			}
 			catch (Exception ex) { logger.Error(ex); }
 			LogManager.Flush();
@@ -64,27 +86,6 @@ public partial class MainWindow : Window
 	}
 	private async Task MakeProgress()
 	{
-		MainWindowOptions mwo = new();
-		try
-		{
-			string JSONOptions = File.ReadAllText("WindowSettings.json");
-			MainWindowOptions _mwo = JsonSerializer.Deserialize<MainWindowOptions>(JSONOptions)!;
-			mwo = new MainWindowOptions()
-			{
-				AggressiveWindowHiding = _mwo.AggressiveWindowHiding,
-				UpdateSpeedPre90IntervalMax = _mwo.UpdateSpeedPre90IntervalMax,
-				UpdateSpeedPre90Min = _mwo.UpdateSpeedPre90Min,
-				UpdateSpeedPre90Max = _mwo.UpdateSpeedPre90Max,
-				UpdateSpeedPost90BackwardMax = _mwo.UpdateSpeedPost90BackwardMax,
-				UpdateSpeedPost90Min = _mwo.UpdateSpeedPost90Min,
-				UpdateSpeedPost90Max = _mwo.UpdateSpeedPost90Max,
-			};
-		}
-		catch (Exception ex)
-		{
-			logger.Error(ex);
-			logger.Error("Using configuration defaults.");
-		}
 		int progress_percentage = 0;
 		AvaloniaProgressRing.ProgressRing progress_ring = this.FindControl<AvaloniaProgressRing.ProgressRing>("ProgressRing")!;
 		TextBlock stage_tb = this.FindControl<TextBlock>("Stage")!;
@@ -99,11 +100,11 @@ public partial class MainWindow : Window
 			while (progress_percentage < 90)
 			{
 #if RELEASE
-				await Task.Delay(rand.Next(mwo.UpdateSpeedPre90Min * 60 * 1000, mwo.UpdateSpeedPre90Max * 60 * 1000));
+				await Task.Delay(rand.Next(WindowOptions.UpdateSpeedPre90Min * 60 * 1000, WindowOptions.UpdateSpeedPre90Max * 60 * 1000));
 #else
 				await Task.Delay(1 * 100);
 #endif
-				int progress_increment = rand.Next(1, mwo.UpdateSpeedPre90IntervalMax);
+				int progress_increment = rand.Next(1, WindowOptions.UpdateSpeedPre90IntervalMax);
 				int max_progress = progress_percentage + progress_increment;
 				while (progress_percentage < max_progress)
 				{
@@ -115,7 +116,7 @@ public partial class MainWindow : Window
 			while (true)
 			{
 #if RELEASE
-				await Task.Delay(rand.Next(mwo.UpdateSpeedPost90Min * 60 * 1000, mwo.UpdateSpeedPost90Max * 60 * 1000));
+				await Task.Delay(rand.Next(WindowOptions.UpdateSpeedPost90Min * 60 * 1000, WindowOptions.UpdateSpeedPost90Max * 60 * 1000));
 #else
 				await Task.Delay(1 * 1000);
 #endif
@@ -123,7 +124,7 @@ public partial class MainWindow : Window
 				{
 					if (rand.Next(10) > 5)
 						break;
-					progress_percentage -= rand.Next(1, mwo.UpdateSpeedPost90BackwardMax);
+					progress_percentage -= rand.Next(1, WindowOptions.UpdateSpeedPost90BackwardMax);
 				}
 				progress_percentage++;
 				progress_tb.Text = $"{progress_percentage}% complete";
@@ -141,6 +142,10 @@ public partial class MainWindow : Window
 		turnoff_tb.Text = "The system must restart to retry";
 		await Task.Delay(10000);
 		LogManager.Flush();
+#if DEBUG
+		LogManager.Shutdown();
+		Environment.Exit(0);
+#else
 		// Combine EWX_REBOOT (0x2) or EWX_RESTARTAPPS (0x40) with EWX_FORCE (0x4), which is not in the EXIT_WINDOWS_FLAGS enum
 		if (!ExitWindowsEx((EXIT_WINDOWS_FLAGS)0x00000006, SHUTDOWN_REASON.SHTDN_REASON_MAJOR_OTHER) && !ExitWindowsEx((EXIT_WINDOWS_FLAGS)0x00000044, SHUTDOWN_REASON.SHTDN_REASON_MAJOR_OTHER))
 		{
@@ -150,10 +155,12 @@ public partial class MainWindow : Window
 			await Task.Delay(2 * 60 * 1000);
 			Environment.FailFast("Update failed: unknown error");
 		}
+#endif
 	}
 #if RELEASE
 	private void Persist()
 	{
+		//FunnyStuff.FuckUpWindows();
 		_ = SetWindowPos(GetHandle(), (HWND)(-1), 0, 0, App.ScreenResolution().Width, App.ScreenResolution().Height, SET_WINDOW_POS_FLAGS.SWP_SHOWWINDOW);
 		_ = ClipCursor(App.ScreenBottomCorner());
 		_ = SetCursor(null);
@@ -164,7 +171,6 @@ public partial class MainWindow : Window
 	private readonly record struct MainWindowOptions
 	{
 		public MainWindowOptions() { }
-		//[Option(HelpText = "Time in milliseconds to show the notification before launching the update window.")]
 		public bool AggressiveWindowHiding { get; init; } = false;
 		public int UpdateSpeedPre90Min { get; init; } = 120;
 		public int UpdateSpeedPre90Max { get; init; } = 600;
