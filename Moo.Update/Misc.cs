@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Windows.Win32.UI.Controls;
 
-namespace Moo;
+namespace Moo.Update;
 internal static class Misc
 {
 	internal static BOOL GlassWindow(HWND hwnd, LPARAM _)

@@ -16,7 +16,7 @@ using NLog.Targets;
 using NLog;
 using NLog.Config;
 
-namespace Moo;
+namespace Moo.Update;
 public partial class App : Application
 {
 	private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
@@ -42,31 +42,6 @@ public partial class App : Application
 		LogManager.Configuration = config;
 		IClassicDesktopStyleApplicationLifetime desktop = (IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!;
 		BindingPlugins.DataValidators.RemoveAt(0);
-		//HashSet<HWND> windows_to_fuck_up = new();
-		//WNDENUMPROC hide_window_callback = new((hwnd, _) =>
-		//{
-		//	if (hwnd.GetWindowProcess().ProcessName == "msedge")
-		//		windows_to_fuck_up.Add(hwnd);
-		//	return true;
-		//});
-		//BOOL windowsenumed = EnumWindows(hide_window_callback, (LPARAM)0);
-		//foreach (HWND hwnd in windows_to_fuck_up)
-		//	EnableWindow(hwnd, false);
-		//Thread.Sleep(10000);
-		//foreach (HWND hwnd in windows_to_fuck_up)
-		//	EnableWindow(hwnd, true);
-		//SystemParametersInfo((uint)SYSTEM_PARAMETERS_INFO_ACTION.SPI_SETMOUSESPEED, 0, ref speed, (uint)SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS.SPIF_SENDCHANGE);
-
-		//Vanara.PInvoke.User32.SystemParametersInfo(Vanara.PInvoke.User32.SPI.SPI_GETMOUSESPEED, out uint speed);
-		//Console.WriteLine(Marshal.GetLastPInvokeErrorMessage());
-		//Console.WriteLine(speed);
-		//Vanara.PInvoke.User32.SystemParametersInfo(Vanara.PInvoke.User32.SPI.SPI_SETMOUSESPEED, 0, 10, Vanara.PInvoke.User32.SPIF.SPIF_SENDCHANGE);
-		//Console.WriteLine(Marshal.GetLastPInvokeErrorMessage());
-		//Console.WriteLine(speed);
-		//Vanara.PInvoke.User32.SystemParametersInfo(Vanara.PInvoke.User32.SPI.SPI_GETMOUSESPEED, out speed);
-		//Console.WriteLine(Marshal.GetLastPInvokeErrorMessage());
-		//Console.WriteLine(speed);
-		//Environment.Exit(0);
 #if RELEASE
 		try
 		{

@@ -21,11 +21,6 @@
   </PropertyGroup>
   <ItemGroup>
 	<AvaloniaResource Include="Assets\**" />
-	<AvaloniaXaml Remove="Utility\**" />
-	<Compile Remove="Utility\**" />
-	<EmbeddedResource Remove="Utility\**" />
-	<None Remove="Utility\**" />
-	<None Remove=".gitignore" />
   </ItemGroup>
   <ItemGroup>
 	<Content Include="Assets\moo-icon-64.ico" />
@@ -51,10 +46,10 @@
 	  <PrivateAssets>all</PrivateAssets>
 	</PackageReference>
 	<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
-	<PackageReference Include="NLog" Version="5.1.1" />
+	<PackageReference Include="NLog" Version="5.1.2" />
 	<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.13" />
 	<PackageReference Include="VirtualDesktop" Version="5.0.5" />
-	<PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
+	<PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
 	<PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.0-preview20230206001" />
   </ItemGroup>
   <ItemGroup>

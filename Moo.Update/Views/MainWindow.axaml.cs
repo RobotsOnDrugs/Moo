@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using Windows.Win32.System.Shutdown;
 #endif
 
-namespace Moo.Views;
+namespace Moo.Update.Views;
 
 public partial class MainWindow : Window
 {

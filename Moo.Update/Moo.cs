@@ -1,4 +1,4 @@
-namespace Moo;
+namespace Moo.Update;
 internal static class Moo
 {
 	// Initialization code. Don't use any Avalonia, third-party APIs or any

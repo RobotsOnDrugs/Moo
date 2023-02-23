@@ -9,7 +9,7 @@ using NLog.Targets;
 
 using WindowsDesktop;
 
-namespace Moo;
+namespace Moo.Update;
 internal static partial class FunnyStuff
 {
 	internal static readonly FileTarget default_logfile_config = new("logfile")

@@ -23,6 +23,7 @@
 	<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta">
 	<PrivateAssets>all</PrivateAssets>
 	</PackageReference>
+	<PackageReference Include="NLog" Version="5.1.2" />
 </ItemGroup>
 
 </Project>

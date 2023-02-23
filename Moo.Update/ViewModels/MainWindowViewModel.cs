@@ -1,4 +1,4 @@
-namespace Moo.ViewModels;
+namespace Moo.Update.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {

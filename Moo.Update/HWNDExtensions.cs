@@ -1,4 +1,4 @@
-﻿namespace Moo;
+﻿namespace Moo.Update;
 public static class HWNDExtensions
 {
 	public static Process GetWindowProcess(this HWND hwnd)

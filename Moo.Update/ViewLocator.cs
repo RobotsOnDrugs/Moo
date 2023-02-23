@@ -1,6 +1,6 @@
 using Avalonia.Controls.Templates;
 
-namespace Moo;
+namespace Moo.Update;
 public class ViewLocator : IDataTemplate
 {
 	public Control Build(object? data)
