@@ -54,7 +54,6 @@ internal static class Notifier
 		.AddButton(data.ButtonText, ToastActivationType.Background, Convert.ToBase64String(Encoding.UTF8.GetBytes(data.URL.OriginalString)))
 		.AddHeroImage(imagepath)
 		.SetToastScenario(ToastScenario.Reminder);
-		//.SetProtocolActivation(data.URL);
 		XmlDocument toast_xml = toastbuilder.GetXml();
 		ToastNotification toast = new(toast_xml);
 		void RespawnToast(ToastNotification t, object _) => RespawnToastInternal(ref toast, t.Content);
