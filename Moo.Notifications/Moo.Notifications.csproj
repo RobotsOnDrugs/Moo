@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -12,7 +12,32 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Images\GoogleChrome_64.ico" />
+    <None Remove="Images\BoozyMoo_Logo_2022_Black-Full-cropped.webp" />
+    <None Remove="Images\GoogleChrome_full.ico" />
+    <None Remove="Images\lemoo.webp" />
+    <None Remove="Images\moo-icon-64.ico" />
+    <None Remove="Notifications.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\BoozyMoo_Logo_2022_Black-Full-cropped.webp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\GoogleChrome_64.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\GoogleChrome_full.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\lemoo.webp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\moo-icon-64.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Notifications.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -39,15 +64,18 @@
     <Content Update="Images\macandcheese.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Images\BoozyMoo_Logo_2022_Black-Full-cropped.webp">
+    <Content Update="Images\moo-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Notifications.json">
+    </Content>
+    <Content Update="Images\moomooexpress.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Update="Images\pizza.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Images\taxidermyrat.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

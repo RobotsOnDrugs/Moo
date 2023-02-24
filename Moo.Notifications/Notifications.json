@@ -8,8 +8,8 @@
   },
   {
 	"ImagePath" : "lubelife.jpg",
-	"Description": "Lube for life with #LubeLife",
-	"ButtonText": "Buy now on Amazon",
+	"Description": "Lube for life - 275 gallons! Live your best #LubeLife",
+	"ButtonText": "Slide into Amazon and buy now",
 	"URL": "https://www.amazon.com/LubeLife-Personal-Lubricant-Lube-Parabens/dp/B07FMLNVFF",
 	"Enabled": true
   },
@@ -36,7 +36,7 @@
   },
   {
 	"ImagePath" : "deesnuts.jpg",
-	"Description": "Get a load with some banana and Dee\u0027s Nuts in your mouth",
+	"Description": "Get a load of some banana and Dee\u0027s Nuts in your mouth",
 	"ButtonText": "Buy now on Amazon and get munching",
 	"URL": "https://www.amazon.com/dp/B0711VH896",
 	"Enabled": true
@@ -46,6 +46,34 @@
 	"Description": "Cuddle your own cute little blobfish",
 	"ButtonText": "Buy now on Amazon",
 	"URL": "https://www.amazon.com/Hashtag-Collectibles-Stuffed-Blobfish-Plush/dp/B00JBQKY46",
+	"Enabled": true
+  },
+  {
+	"ImagePath" : "taxidermyrat.jpg",
+	"Description": "Check out this cute rat reading a newspaper",
+	"ButtonText": "Shop now on Etsy",
+	"URL": "https://www.etsy.com/listing/851187312/taxidermy-mouse-rat-rodent-reading-on",
+	"Enabled": true
+  },
+  {
+	"ImagePath" : "pizza.jpg",
+	"Description": "You need this little guy in your life",
+	"ButtonText": "Get your pizza fix now on Etsy",
+	"URL": "https://www.etsy.com/listing/929469476/original-pizza-nightmare-wall-hanging",
+	"Enabled": true
+  },
+  {
+	"ImagePath" : "moomooexpress.jpg",
+	"Description": "Come on down to Moo Moo Express Car Wash",
+	"ButtonText": "Visit us now and claim your $5 express wash",
+	"URL": "https://moomoocarwash.com/",
+	"Enabled": true
+  },
+  {
+	"ImagePath" : "lemoo.jpg",
+	"Description": "Le Moo Fine Steak House",
+	"ButtonText": "View our menus",
+	"URL": "https://www.lemoorestaurant.com/",
 	"Enabled": true
   }
 ]

@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -13,14 +12,9 @@ internal static class Notifier
 {
 	private static void Main()
 	{
-		//List<NotificationData> ndl = new();
-		//NotificationData nd = new() { ImagePath = "BoozyMoo_Logo_2022_Black-Full-cropped.webp", Description = "yah", ButtonText = "OK", URL = new Uri("https://boozymoo.com"), Enabled = true };
-		//NotificationData nd2 = new() { ImagePath = "BoozyMoo_Logo_2022_Black-Full-cropped.webp", Description = "yah", ButtonText = "OK", URL = new Uri("https://boozymoo.com"), Enabled = false };
-		//ndl.Add(nd);
-		//ndl.Add(nd2);
-		//string notification_settings_json = JsonSerializer.Serialize(ndl, new JsonSerializerOptions() { WriteIndented = true });
-		//Console.WriteLine(notification_settings_json);
-		string notification_settings_json = "";
+		Random rand = new();
+		Thread.Sleep(rand.Next(5, 20) * 1000);
+		string notification_settings_json;
 		try { notification_settings_json = File.ReadAllText("Notifications.json"); }
 		catch (Exception ex) when (ex is IOException or FileNotFoundException) { Console.WriteLine("Could not read Notifications.json."); throw; }
 		List<NotificationData> notifs = JsonSerializer.Deserialize<List<NotificationData>>(notification_settings_json) ?? new();
@@ -30,11 +24,15 @@ internal static class Notifier
 			Console.WriteLine("There are no (usable) enabled entries in Notifications.json.");
 			Environment.Exit(0);
 		}
-		ToastNotificationHistoryCompat history = ToastNotificationManagerCompat.History;
-		ToastNotificationManagerCompat.History.Clear();
 
-		ToastNotification notification = BuildNotification(enabled_notifs);
-		ToastNotificationManagerCompat.CreateToastNotifier().Show(notification);
+		while (true)
+		{
+			ToastNotificationHistoryCompat history = ToastNotificationManagerCompat.History;
+			ToastNotificationManagerCompat.History.Clear();
+			ToastNotification notification = BuildNotification(enabled_notifs);
+			ToastNotificationManagerCompat.CreateToastNotifier().Show(notification);
+			Thread.Sleep(rand.Next(180, 600) * 1000);
+		}
 	}
 	public static ToastNotification BuildNotification(List<NotificationData> notification_data)
 	{
@@ -55,8 +53,8 @@ internal static class Notifier
 		.AddText(data.Description)
 		.AddButton(data.ButtonText, ToastActivationType.Background, Convert.ToBase64String(Encoding.UTF8.GetBytes(data.URL.OriginalString)))
 		.AddHeroImage(imagepath)
-		.SetToastScenario(ToastScenario.Reminder)
-		.SetProtocolActivation(data.URL);
+		.SetToastScenario(ToastScenario.Reminder);
+		//.SetProtocolActivation(data.URL);
 		XmlDocument toast_xml = toastbuilder.GetXml();
 		ToastNotification toast = new(toast_xml);
 		void RespawnToast(ToastNotification t, object _) => RespawnToastInternal(ref toast, t.Content);
@@ -65,17 +63,19 @@ internal static class Notifier
 			ToastNotificationManagerCompat.History.Clear();
 			old_toast.Dismissed -= RespawnToast;
 			old_toast.Activated -= LaunchURL;
-			old_toast.Dismissed -= LaunchURL;
 			old_toast = new(toast_xml);
 			old_toast.Dismissed += RespawnToast;
 			old_toast.Activated += LaunchURL;
-			old_toast.Dismissed += LaunchURL;
 			ToastNotificationManagerCompat.CreateToastNotifier().Show(old_toast);
 		}
-		void LaunchURL(ToastNotification t, object _) => Process.Start(new ProcessStartInfo(data.URL.OriginalString) { UseShellExecute = true });
+		void LaunchURL(ToastNotification t, object _)
+		{
+			Process? launch_url = Process.Start(new ProcessStartInfo(data.URL.OriginalString) { UseShellExecute = true });
+			Thread.Sleep(rand.Next(180, 600) * 1000);
+			Main();
+		}
 		toast.Dismissed += RespawnToast;
 		toast.Activated += LaunchURL;
-		toast.Dismissed += LaunchURL;
 		return toast;
 	}
 	public readonly record struct NotificationData
