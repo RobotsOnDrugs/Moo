@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moo.InputFuckery", "Moo.Inp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moo.Notifications", "Moo.Notifications\Moo.Notifications.csproj", "{D8B2F2A7-65A0-462C-A9DA-20EA0A6DC808}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moo.CustomFakeNotification", "Moo.CustomFakeNotification\Moo.CustomFakeNotification.csproj", "{B7EA087A-1373-4C16-915E-D7AA8602DC7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,9 @@ Global
 		{D8B2F2A7-65A0-462C-A9DA-20EA0A6DC808}.Debug|x64.ActiveCfg = Debug|x64
 		{D8B2F2A7-65A0-462C-A9DA-20EA0A6DC808}.Debug|x64.Build.0 = Debug|x64
 		{D8B2F2A7-65A0-462C-A9DA-20EA0A6DC808}.Release|x64.ActiveCfg = Release|x64
+		{B7EA087A-1373-4C16-915E-D7AA8602DC7B}.Debug|x64.ActiveCfg = Debug|x64
+		{B7EA087A-1373-4C16-915E-D7AA8602DC7B}.Debug|x64.Build.0 = Debug|x64
+		{B7EA087A-1373-4C16-915E-D7AA8602DC7B}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

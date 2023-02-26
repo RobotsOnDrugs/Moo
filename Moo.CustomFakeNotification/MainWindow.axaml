@@ -1,0 +1,60 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
+	mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="300"
+	x:Class="Moo.FakeAV.MainWindow"
+	Title="Moo.FakeAV"
+	SystemDecorations="None"
+	HasSystemDecorations="False"
+	ShowInTaskbar="False"
+	Width="500"
+	Height="300"
+	ZIndex="-1"
+	CanResize="False"
+	Background="Transparent"
+	TransparencyLevelHint="Transparent">
+	<!-- Corner rounding is done via code-behind in the Activated event handler -->
+		<Grid ShowGridLines="True" Background="#f8f8f8" Opacity="40" ColumnDefinitions="*" RowDefinitions="Auto, Auto, *, *">
+			<StackPanel Grid.Column="0" Grid.Row="0">
+				<StackPanel Background="White" IsVisible="False">
+					<Button Name="HelloButton" BorderThickness="0" CornerRadius="0" Background="Gold" Content="Hello" />
+					<TextBlock Background="Aqua" Text="sup" />
+					<TextBlock Padding="10" Text="heyhey" Background="Bisque" Foreground="Black" />
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Background="Green" Grid.Row="3" IsVisible="False">
+				<TextBlock Margin="10" Text="	Test sentence, yo. Gonna write some text. Keep it going, let's make it wrap. More more more yeah." TextWrapping="1" LineHeight="16" FontSize="12" HorizontalAlignment="Right" />
+				<sg:SpacedGrid RowSpacing="10" ColumnSpacing="10" Margin="10" ShowGridLines="False">
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+					<Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Content="Hey Hey" HorizontalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+					<Button Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Content="Hey Hey" HorizontalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+
+					<Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+					<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				</sg:SpacedGrid>
+			</StackPanel>
+			<Grid Grid.Row="3" RowDefinitions="*, Auto, Auto">
+				<TextBlock Grid.Row="0" Text="Scanning" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, 0, 0" />
+				<TextBlock Grid.Row="1" Text="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16, 12, 16, 16" />
+				<ProgressBar Grid.Row="2" IsIndeterminate="True" VerticalAlignment="Bottom" Height="8" CornerRadius="15" />
+			</Grid>
+		
+			<Grid Background="Transparent" Opacity="999" ShowGridLines="True" Grid.Column="0" Grid.Row="0" ColumnDefinitions="48, *, 30">
+				<TextBlock Foreground="Black" Grid.Column="1" Text="Text here" FontSize="36" Margin="8, 8" HorizontalAlignment="Center" />
+				<TextBlock Grid.Column="2" Text="X" HorizontalAlignment="Right" Margin="0, 15, 21, 0" />
+				<Button Grid.Column="2" Background="LightGray" Opacity="99" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Width="25" Height="25" />
+			</Grid>
+		</Grid>
+</Window>

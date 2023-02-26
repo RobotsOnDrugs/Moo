@@ -19,7 +19,7 @@ internal static class Notifier
 		catch (Exception ex) when (ex is IOException or FileNotFoundException) { Console.WriteLine("Could not read Notifications.json."); throw; }
 		List<NotificationData> notifs = JsonSerializer.Deserialize<List<NotificationData>>(notification_settings_json) ?? new();
 		List<NotificationData> enabled_notifs = notifs.Where(n => n.Enabled).ToList();
-		if (!enabled_notifs.Any())
+		if (enabled_notifs.Count == 0)
 		{
 			Console.WriteLine("There are no (usable) enabled entries in Notifications.json.");
 			Environment.Exit(0);
@@ -34,10 +34,12 @@ internal static class Notifier
 			Thread.Sleep(rand.Next(180, 600) * 1000);
 		}
 	}
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "Toast event signature")]
 	public static ToastNotification BuildNotification(List<NotificationData> notification_data)
 	{
 		Random rand = new();
-		NotificationData data = notification_data[rand.Next(0, notification_data.Count - 1)];
+		NotificationData data = rand.GetItems(notification_data.ToArray(), 1)[0];
+		//NotificationData data = notification_data[rand.Next(0, notification_data.Count - 1)];
 		try
 		{
 			if (!data.URL.IsAbsoluteUri || data.URL.Scheme != "https")
