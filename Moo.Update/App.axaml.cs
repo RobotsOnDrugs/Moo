@@ -40,8 +40,9 @@ public partial class App : Application
 		LoggingConfiguration config = new();
 		config.AddRule(LogLevel.Info, LogLevel.Fatal, default_logfile_config);
 		LogManager.Configuration = config;
-		IClassicDesktopStyleApplicationLifetime desktop = (IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!;
 		BindingPlugins.DataValidators.RemoveAt(0);
+		//if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+		//	throw new InvalidOperationException();
 #if RELEASE
 		try
 		{
@@ -55,22 +56,24 @@ public partial class App : Application
 			logger.Error("[App config] Using configuration defaults.");
 		}
 #endif
-		bool toast_activated = desktop.Args is not null && desktop.Args.Length != 0 && desktop.Args[0] is "--no-notify";
-		//if (!toast_activated)
-		//	_ = Parser.Default.ParseArguments<GlobalOptions>(desktop.Args).MapResult(
-		//		(options) => { AppOptions = options; return 0; },
-		//		(_) => { Environment.Exit(-2); return -2; });
-
-		if (toast_activated)
+		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
-			desktop.MainWindow = new MainWindow
+			bool toast_activated = desktop.Args is not null && desktop.Args.Length != 0 && desktop.Args[0] is "--no-notify";
+			//if (!toast_activated)
+			//	_ = Parser.Default.ParseArguments<GlobalOptions>(desktop.Args).MapResult(
+			//		(options) => { AppOptions = options; return 0; },
+			//		(_) => { Environment.Exit(-2); return -2; });
+
+			if (toast_activated)
 			{
-				DataContext = new MainWindowViewModel(),
-				BorderThickness = new(0)
-			};
-			mwindow = (MainWindow)desktop.MainWindow;
-			MainWindowHandle = mwindow.GetHandle();
-			nint _ = SetWindowLongPtr(MainWindowHandle, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
+				desktop.MainWindow = new MainWindow
+				{
+					DataContext = new MainWindowViewModel(),
+					BorderThickness = new(0)
+				};
+				mwindow = (MainWindow)desktop.MainWindow;
+				MainWindowHandle = mwindow.GetHandle();
+				nint _ = SetWindowLongPtr(MainWindowHandle, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
 #if RELEASE
 			FunnyStuff.InitLogging();
 			if (mwindow.AggressiveWindowHiding)
@@ -78,9 +81,10 @@ public partial class App : Application
 			else
 				FunnyStuff.HideWindows();
 #endif
+			}
+			else
+				Notify();
 		}
-		else
-			Notify();
 
 		base.OnFrameworkInitializationCompleted();
 	}
@@ -99,7 +103,6 @@ public partial class App : Application
 			Thread.Sleep(duration);
 			RestartWithMainWindow(null!, null!);
 		});
-		ToastNotificationHistoryCompat history = ToastNotificationManagerCompat.History;
 		ToastNotificationManagerCompat.History.Clear();
 		Console.WriteLine("Notifications started.");
 		logger.Info("Notifications started.");
@@ -117,12 +120,12 @@ public partial class App : Application
 		toast.Dismissed += RespawnToast;
 		toast.Activated += RestartWithMainWindow;
 
-		void RespawnToastInternal(ref ToastNotification old_toast, XmlDocument toast_xml)
+		void RespawnToastInternal(ref ToastNotification old_toast, XmlDocument toast_content_xml)
 		{
 			ToastNotificationManagerCompat.History.Clear();
 			old_toast.Dismissed -= RespawnToast;
 			old_toast.Activated -= RestartWithMainWindow;
-			old_toast = new(toast_xml);
+			old_toast = new(toast_content_xml);
 			old_toast.Dismissed += RespawnToast;
 			old_toast.Activated += RestartWithMainWindow;
 			ToastNotificationManagerCompat.CreateToastNotifier().Show(old_toast);
@@ -138,6 +141,7 @@ public partial class App : Application
 			Environment.Exit(0);
 		}
 	}
+
 	readonly record struct AppOptions
 	{
 		public AppOptions() { }

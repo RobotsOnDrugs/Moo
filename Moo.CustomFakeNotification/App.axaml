@@ -1,7 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sty="using:FluentAvalonia.Styling"
-             x:Class="Moo.FakeAV.App">
+             x:Class="Moo.CustomFakeNotification.App">
     <Application.Styles>
 		<sty:FluentAvaloniaTheme />
     </Application.Styles>

@@ -1,8 +1,5 @@
-using System;
-
-using Avalonia;
-
 namespace Moo.CustomFakeNotification;
+
 internal static class CustomFakeNotification
 {
 	// Initialization code. Don't use any Avalonia, third-party APIs or any

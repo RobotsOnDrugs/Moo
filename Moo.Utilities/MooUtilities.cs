@@ -11,8 +11,7 @@ public static partial class MooUtilities
 
 	public static void Main()
 	{
-		WNDENUMPROC window_info_callback = new(GetWindowInfo);
-		BOOL windowsenumed = EnumWindows(window_info_callback, (LPARAM)0);
+		_ = EnumWindows(GetWindowInfo, 0);
 		foreach (uint pid in WindowHandles.Keys)
 		{
 			Process process = Process.GetProcessById((int)pid);
@@ -20,8 +19,8 @@ public static partial class MooUtilities
 			string description = "<unknown> ";
 			try
 			{
-				string? _description = $"{FileVersionInfo.GetVersionInfo(process.MainModule?.FileName ?? string.Empty).FileDescription}";
-				description = _description is not null ? $"({_description}) " : "";
+				string _description = $"{FileVersionInfo.GetVersionInfo(process.MainModule?.FileName ?? string.Empty).FileDescription}";
+				description = _description != string.Empty ? $"({_description}) " : "";
 			}
 			catch (System.ComponentModel.Win32Exception) { }
 			Console.WriteLine($"{process.ProcessName}: {description}[{maintitle}] ->");
@@ -31,10 +30,10 @@ public static partial class MooUtilities
 
 	private static BOOL GetWindowInfo(HWND hwnd, LPARAM _)
 	{
-		HWND owner_hwnd = GetWindow(hwnd, GET_WINDOW_CMD.GW_OWNER);
-		uint owner_thread_id = GetWindowThreadProcessId((nint)owner_hwnd, out uint owner_id);
-		Process owner_process = Process.GetProcessById((int)owner_id);
-		int thread_id = (int)GetWindowThreadProcessId((nint)hwnd, out uint id);
+		// HWND owner_hwnd = GetWindow(hwnd, GET_WINDOW_CMD.GW_OWNER);
+		// uint owner_thread_id = GetWindowThreadProcessId(owner_hwnd, out uint owner_id);
+		// Process owner_process = Process.GetProcessById((int)owner_id);
+		int thread_id = (int)GetWindowThreadProcessId(hwnd, out uint id);
 		if (WindowHandles.TryGetValue(id, out HashSet<HWND>? children))
 			return children.Add(hwnd);
 		WindowHandles[id] = new HashSet<HWND>() { hwnd };

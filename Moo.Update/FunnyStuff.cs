@@ -8,9 +8,11 @@ using NLog;
 using NLog.Targets;
 
 using WindowsDesktop;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace Moo.Update;
-internal static partial class FunnyStuff
+
+internal static class FunnyStuff
 {
 	internal static readonly FileTarget default_logfile_config = new("logfile")
 	{
@@ -18,20 +20,20 @@ internal static partial class FunnyStuff
 		FileName = "funnystuff.log",
 		ArchiveOldFileOnStartupAboveSize = 1024 * 1024
 	};
-	private static Dictionary<HWND, Process> HiddenWindows { get; set; } = new();
+	private static Dictionary<HWND, Process> HiddenWindows { get; } = new();
 	private static ConcurrentDictionary<HWND, WindowStyle> WindowsToFuck { get; set; } = new();
-	private static ConcurrentDictionary<HWND, WindowStyle> FuckedWindows { get; set; } = new();
-	private static VirtualDesktop? NewDesktop { get; set; } = null;
+	private static ConcurrentDictionary<HWND, WindowStyle> FuckedWindows { get; } = new();
+	private static VirtualDesktop? NewDesktop { get; set; }
+
 	private static readonly string ThisProcessName = Process.GetProcessById(Environment.ProcessId).ProcessName;
-	//"uv_x64", "UltraViewer_Desktop", "TeamViewer_desktop", "Anydesk", "AnyDesk",
-	private static readonly HashSet<string> whitelist = new() { ThisProcessName, "TeamViewer", "Idle", "WindowsTerminal", "conhost", "devenv", "ApplicationFrameHost", "dwm" };
+	private static readonly HashSet<string> whitelist = new() { ThisProcessName, "TeamViewer", "Idle", "WindowsTerminal", "conhost", "devenv", "ApplicationFrameHost", "dwm" }; //"uv_x64", "UltraViewer_Desktop", "TeamViewer_desktop", "Anydesk", "AnyDesk",
 	private static readonly HashSet<string> killlist = new() { "WinStore.App", "SystemSettings", "explorer" };
 	private static readonly HashSet<string> modern_ui_paths = new() { "ImmersiveControlPanel", "WindowsApps", "SystemApps" }; // at index 2 (grandchild of root path)
 	private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 	public static IEnumerable<Process> GetOnlyModernUIProcesses(this IEnumerable<Process> processes) =>
-			processes.Where(p => p.MainModule is not null &&
-			p.MainModule!.FileName.Split('\\').Length > 2 &&
-			modern_ui_paths.Contains(p.MainModule!.FileName.Split('\\')[2]));
+		processes.Where(p => p.MainModule is not null &&
+		p.MainModule!.FileName.Split('\\').Length > 2 &&
+		modern_ui_paths.Contains(p.MainModule!.FileName.Split('\\')[2]));
 	public static void InitLogging() => LogManager.Configuration.AddRule(LogLevel.Info, LogLevel.Fatal, default_logfile_config);
 	public static void FuckUpWindows()
 	{
@@ -51,11 +53,11 @@ internal static partial class FunnyStuff
 				mm = proc.MainModule;
 				if (mm is null)
 					continue;
-				if (mm!.FileName.Split('\\').Length <= 2)
+				if (mm.FileName.Split('\\').Length <= 2)
 					continue;
 			}
 			catch (Exception ex) when (ex is InvalidOperationException or Win32Exception) { continue; }
-			if (!modern_ui_paths.Contains(mm!.FileName.Split('\\')[2]))
+			if (!modern_ui_paths.Contains(mm.FileName.Split('\\')[2]))
 				continue;
 			try
 			{
@@ -72,8 +74,7 @@ internal static partial class FunnyStuff
 			{
 				WindowsToFuck = new();
 				logger.Info($"[Hide] {WindowsToFuck.Count} window(s) set to be fucked.");
-				WNDENUMPROC hide_window_callback = new(FilterWindows);
-				BOOL windowsenumed = EnumWindows(hide_window_callback, (LPARAM)0);
+				BOOL windowsenumed = EnumWindows(FilterWindows, 0);
 				logger.Info($"{WindowsToFuck.Count} windows set to be fucked.");
 				//Environment.Exit(0);
 				foreach (KeyValuePair<HWND, WindowStyle> window in WindowsToFuck)
@@ -101,17 +102,16 @@ internal static partial class FunnyStuff
 		};
 		if (whitelist.Contains(process.ProcessName))
 			return LogReasonAndReturn("the process is whitelisted");
-		bool must_hide = false;
-		if (old_ws.Style == (old_ws.Style | WINDOW_STYLE.WS_VISIBLE))
-			must_hide = true;
-		if (process.ProcessName == "AnyDesk")
-			must_hide = true;
-		if (!must_hide && (old_ws.ExStyle == (old_ws.ExStyle | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW)))
-			return LogReasonAndReturn("it's a toolwindow");
-		//if (!visible && (old_ws.Style == (old_ws.Style | WINDOW_STYLE.WS_DISABLED)))
-		//	return LogReasonAndReturn("it's disabled");
-		if (!must_hide && (old_ws.ExStyle == (old_ws.ExStyle | WINDOW_EX_STYLE.WS_EX_NOACTIVATE)))
-			return LogReasonAndReturn("it shouldn't be activated");
+		bool must_hide = old_ws.Style == (old_ws.Style | WINDOW_STYLE.WS_VISIBLE) || process.ProcessName == "AnyDesk";
+		switch (must_hide)
+		{
+			case false when old_ws.ExStyle == (old_ws.ExStyle | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW):
+				return LogReasonAndReturn("it's a toolwindow");
+			//if (!visible && (old_ws.Style == (old_ws.Style | WINDOW_STYLE.WS_DISABLED)))
+			//	return LogReasonAndReturn("it's disabled");
+			case false when old_ws.ExStyle == (old_ws.ExStyle | WINDOW_EX_STYLE.WS_EX_NOACTIVATE):
+				return LogReasonAndReturn("it shouldn't be activated");
+		}
 		_ = WindowsToFuck.TryAdd(hwnd, old_ws);
 		if (!must_hide && (old_ws.ExStyle == (old_ws.ExStyle | WINDOW_EX_STYLE.WS_EX_CONTROLPARENT)))
 			return LogReasonAndReturn("it has child windows (CONTROLPARENT)");
@@ -184,7 +184,7 @@ internal static partial class FunnyStuff
 		VirtualDesktop new_desktop = VirtualDesktop.Create();
 		foreach (HWND hwnd in GetFilteredWindowsInVirtualDesktop())
 		{
-			VirtualDesktop.MoveToDesktop((nint)hwnd, new_desktop);
+			VirtualDesktop.MoveToDesktop(hwnd, new_desktop);
 			logger.Info($"Moved a window from {hwnd.GetWindowProcess().ProcessName} ({(nint)hwnd}) to desktop {new_desktop.Id}");
 		}
 		NewDesktop = new_desktop;
@@ -192,7 +192,7 @@ internal static partial class FunnyStuff
 	public static void UnhideWindows()
 	{
 		foreach (KeyValuePair<HWND, Process> kvp in HiddenWindows)
-			VirtualDesktop.MoveToDesktop((nint)kvp.Key, VirtualDesktop.Current);
+			VirtualDesktop.MoveToDesktop(kvp.Key, VirtualDesktop.Current);
 		NewDesktop?.Remove();
 		NewDesktop = null;
 	}
@@ -206,17 +206,17 @@ internal static partial class FunnyStuff
 			Process process = hwnd.GetWindowProcess();
 			if (process.Id == Environment.ProcessId)
 				return true;
-			nint handle_ptr = (nint)hwnd;
+			nint handle_ptr = hwnd;
 			if (GetClientRect(hwnd, out RECT rect) && rect.Size.Width > 1 && rect.Size.Height > 1)
 				window_desktop = VirtualDesktop.FromHwnd(handle_ptr);
 			if (window_desktop is not null)
 				added = FilteredWindows.Add(hwnd);
 			return true;
 		}
-		WNDENUMPROC enum_window_callback = new(Filter);
-		BOOL windowsenumed = EnumWindows(enum_window_callback, (LPARAM)0);
+		BOOL windowsenumed = EnumWindows(Filter, 0);
 		return FilteredWindows;
 	}
+
 	private readonly record struct WindowStyle
 	{
 		public WINDOW_STYLE Style { get; init; }

@@ -4,10 +4,9 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
 	mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="300"
-	x:Class="Moo.FakeAV.MainWindow"
+	x:Class="Moo.CustomFakeNotification.MainWindow"
 	Title="Moo.FakeAV"
 	SystemDecorations="None"
-	HasSystemDecorations="False"
 	ShowInTaskbar="False"
 	Width="500"
 	Height="300"
@@ -26,20 +25,9 @@
 			</StackPanel>
 			<StackPanel Background="Green" Grid.Row="3" IsVisible="False">
 				<TextBlock Margin="10" Text="	Test sentence, yo. Gonna write some text. Keep it going, let's make it wrap. More more more yeah." TextWrapping="1" LineHeight="16" FontSize="12" HorizontalAlignment="Right" />
-				<sg:SpacedGrid RowSpacing="10" ColumnSpacing="10" Margin="10" ShowGridLines="False">
-					<Grid.RowDefinitions>
-						<RowDefinition />
-						<RowDefinition />
-						<RowDefinition />
-					</Grid.RowDefinitions>
+				<sg:SpacedGrid RowSpacing="10" ColumnSpacing="10" Margin="10" ShowGridLines="False" RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
 
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition />
-						<ColumnDefinition />
-						<ColumnDefinition />
-					</Grid.ColumnDefinitions>
-					<Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Content="Hey Hey" HorizontalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
-					<Button Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Content="Hey Hey" HorizontalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+					<Button Grid.Row="0" Grid.Column="0" Content="Hey Hey" HorizontalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
 
 					<Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 					<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -54,7 +42,7 @@
 			<Grid Background="Transparent" Opacity="999" ShowGridLines="True" Grid.Column="0" Grid.Row="0" ColumnDefinitions="48, *, 30">
 				<TextBlock Foreground="Black" Grid.Column="1" Text="Text here" FontSize="36" Margin="8, 8" HorizontalAlignment="Center" />
 				<TextBlock Grid.Column="2" Text="X" HorizontalAlignment="Right" Margin="0, 15, 21, 0" />
-				<Button Grid.Column="2" Background="LightGray" Opacity="99" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Width="25" Height="25" />
+				<Button Grid.Column="2" BorderThickness="2" Background="Transparent" Opacity="99" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Width="25" Height="25" />
 			</Grid>
 		</Grid>
 </Window>

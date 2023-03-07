@@ -1,7 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Avalonia.Input;
 using Avalonia.Threading;
+
 using NLog;
 using NLog.Targets;
+
 using System.IO;
 using System.Text.Json;
 #if RELEASE
@@ -11,35 +15,39 @@ using Windows.Win32.System.Shutdown;
 
 namespace Moo.Update.Views;
 
+[SuppressMessage("ReSharper", "AccessToModifiedClosure")]
 public partial class MainWindow : Window
 {
-	private int AltKeyPressed = 0;
+	private int _alt_key_pressed = 0;
 	private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 	internal bool AggressiveWindowHiding => WindowOptions.AggressiveWindowHiding;
 	private MainWindowOptions WindowOptions { get; init; }
 	private Action UndoWindowHide { get; init; }
-	internal static readonly FileTarget default_logfile_config = new("logfile")
+
+	internal static readonly FileTarget DefaultLogfileConfig = new("logfile")
 	{
 		Layout = NLog.Layouts.Layout.FromString("[${longdate}]${when:when=exception != null: [${callsite-filename}${literal:text=\\:} ${callsite-linenumber}]} ${level}: ${message}${exception:format=@}"),
 		FileName = "mainwindow.log",
 		ArchiveOldFileOnStartupAboveSize = 1024 * 1024
 	};
+
 	public MainWindow()
 	{
-		LogManager.Configuration.AddRule(LogLevel.Info, LogLevel.Fatal, default_logfile_config);
+		LogManager.Configuration.AddRule(LogLevel.Info, LogLevel.Fatal, DefaultLogfileConfig);
 		try
 		{
+			// ReSharper disable once InconsistentNaming
 			string JSONOptions = File.ReadAllText("WindowSettings.json");
-			MainWindowOptions _mwo = JsonSerializer.Deserialize<MainWindowOptions>(JSONOptions)!;
+			MainWindowOptions mwo = JsonSerializer.Deserialize<MainWindowOptions>(JSONOptions)!;
 			WindowOptions = new MainWindowOptions()
 			{
-				AggressiveWindowHiding = _mwo.AggressiveWindowHiding,
-				UpdateSpeedPre90IntervalMax = _mwo.UpdateSpeedPre90IntervalMax,
-				UpdateSpeedPre90Min = _mwo.UpdateSpeedPre90Min,
-				UpdateSpeedPre90Max = _mwo.UpdateSpeedPre90Max,
-				UpdateSpeedPost90BackwardMax = _mwo.UpdateSpeedPost90BackwardMax,
-				UpdateSpeedPost90Min = _mwo.UpdateSpeedPost90Min,
-				UpdateSpeedPost90Max = _mwo.UpdateSpeedPost90Max,
+				AggressiveWindowHiding = mwo.AggressiveWindowHiding,
+				UpdateSpeedPre90IntervalMax = mwo.UpdateSpeedPre90IntervalMax,
+				UpdateSpeedPre90Min = mwo.UpdateSpeedPre90Min,
+				UpdateSpeedPre90Max = mwo.UpdateSpeedPre90Max,
+				UpdateSpeedPost90BackwardMax = mwo.UpdateSpeedPost90BackwardMax,
+				UpdateSpeedPost90Min = mwo.UpdateSpeedPost90Min,
+				UpdateSpeedPost90Max = mwo.UpdateSpeedPost90Max,
 			};
 		}
 		catch (Exception ex)
@@ -66,11 +74,11 @@ public partial class MainWindow : Window
 	{
 		if (e.Key is not Key.LeftAlt or Key.RightAlt)
 		{
-			AltKeyPressed = 0;
+			_alt_key_pressed = 0;
 			return;
 		}
-		AltKeyPressed++;
-		if (AltKeyPressed > 2)
+		_alt_key_pressed++;
+		if (_alt_key_pressed > 2)
 		{
 			KeyUp -= ExitWithAlt;
 			try

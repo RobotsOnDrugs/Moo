@@ -9,7 +9,7 @@ Thread.Sleep(2000);
 //	return true;
 //}, 0);
 
-Gdi32.SafeHDC desktop = GetDC(HWND.NULL);
+Gdi32.SafeHDC desktop = GetDC();
 using Graphics g = Graphics.FromHdc(desktop.DangerousGetHandle());
 
 g.Clear(Color.Transparent);

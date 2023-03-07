@@ -8,6 +8,7 @@ using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
 namespace Moo.Notifications;
+
 internal static class Notifier
 {
 	private static void Main()
@@ -27,7 +28,6 @@ internal static class Notifier
 
 		while (true)
 		{
-			ToastNotificationHistoryCompat history = ToastNotificationManagerCompat.History;
 			ToastNotificationManagerCompat.History.Clear();
 			ToastNotification notification = BuildNotification(enabled_notifs);
 			ToastNotificationManagerCompat.CreateToastNotifier().Show(notification);
@@ -38,8 +38,8 @@ internal static class Notifier
 	public static ToastNotification BuildNotification(List<NotificationData> notification_data)
 	{
 		Random rand = new();
-		NotificationData data = rand.GetItems(notification_data.ToArray(), 1)[0];
-		//NotificationData data = notification_data[rand.Next(0, notification_data.Count - 1)];
+		// NotificationData data = rand.GetItems(notification_data.ToArray(), 1)[0];
+		NotificationData data = notification_data[rand.Next(0, notification_data.Count - 1)];
 		try
 		{
 			if (!data.URL.IsAbsoluteUri || data.URL.Scheme != "https")
@@ -52,12 +52,11 @@ internal static class Notifier
 		}
 		Uri imagepath = Path.IsPathFullyQualified(data.ImagePath) ? new(data.ImagePath) : new Uri(AppDomain.CurrentDomain.BaseDirectory + "Images\\" + data.ImagePath);
 		ToastContentBuilder toastbuilder = new ToastContentBuilder()
-		.AddText(data.Description)
-		.AddButton(data.ButtonText, ToastActivationType.Background, Convert.ToBase64String(Encoding.UTF8.GetBytes(data.URL.OriginalString)))
-		.AddHeroImage(imagepath)
-		.SetToastScenario(ToastScenario.Reminder);
-		XmlDocument toast_xml = toastbuilder.GetXml();
-		ToastNotification toast = new(toast_xml);
+			.AddText(data.Description)
+			.AddButton(data.ButtonText, ToastActivationType.Background, Convert.ToBase64String(Encoding.UTF8.GetBytes(data.URL.OriginalString)))
+			.AddHeroImage(imagepath)
+			.SetToastScenario(ToastScenario.Reminder);
+		ToastNotification toast = new(toastbuilder.GetXml());
 		void RespawnToast(ToastNotification t, object _) => RespawnToastInternal(ref toast, t.Content);
 		void RespawnToastInternal(ref ToastNotification old_toast, XmlDocument toast_xml)
 		{
@@ -79,6 +78,7 @@ internal static class Notifier
 		toast.Activated += LaunchURL;
 		return toast;
 	}
+
 	public readonly record struct NotificationData
 	{
 		public required string ImagePath { get; init; }
