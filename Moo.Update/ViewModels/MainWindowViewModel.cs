@@ -1,8 +1,3 @@
 namespace Moo.Update.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
-{
-	public MainWindowViewModel()
-	{
-	}
-}
+public class MainWindowViewModel : ViewModelBase { }

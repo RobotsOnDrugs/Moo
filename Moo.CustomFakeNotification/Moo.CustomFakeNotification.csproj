@@ -7,9 +7,16 @@
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <Platforms>x64</Platforms>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
+    <None Remove="Assets\260px-Warning.svg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\260px-Warning.svg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.
@@ -30,5 +37,10 @@
     </PackageReference>
     <PackageReference Include="Vanara.PInvoke.User32" Version="3.4.13" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <OriginalXamlResource Include="Assets\260px-Warning.svg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </OriginalXamlResource>
   </ItemGroup>
 </Project>

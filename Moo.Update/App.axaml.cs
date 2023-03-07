@@ -19,8 +19,8 @@ using NLog.Config;
 namespace Moo.Update;
 public partial class App : Application
 {
-	private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-	internal static readonly FileTarget default_logfile_config = new("logfile")
+	private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+	internal static readonly FileTarget DefaultLogfileConfig = new("logfile")
 	{
 		Layout = NLog.Layouts.Layout.FromString("[${longdate}]${when:when=exception != null: [${callsite-filename}${literal:text=\\:} ${callsite-linenumber}]} ${level}: ${message}${exception:format=@}"),
 		FileName = "app.log",
@@ -29,16 +29,16 @@ public partial class App : Application
 #if RELEASE
 	private static AppOptions Options = new();
 #endif
-	public static RECT ScreenResolution() { _ = GetClientRect(desktop_handle, out RECT sr); return sr; }
-	private static readonly HWND desktop_handle = GetDesktopWindow();
+	public static RECT ScreenResolution() { _ = GetClientRect(DesktopHandle, out RECT sr); return sr; }
+	private static readonly HWND DesktopHandle = GetDesktopWindow();
 	public static RECT ScreenBottomCorner() => new(ScreenResolution().Width, ScreenResolution().Height, ScreenResolution().Width, ScreenResolution().Height);
 	public override void Initialize() => AvaloniaXamlLoader.Load(this);
-	MainWindow mwindow = null!;
+	MainWindow _mwindow = null!;
 	internal static HWND MainWindowHandle;
 	public override void OnFrameworkInitializationCompleted()
 	{
 		LoggingConfiguration config = new();
-		config.AddRule(LogLevel.Info, LogLevel.Fatal, default_logfile_config);
+		config.AddRule(LogLevel.Info, LogLevel.Fatal, DefaultLogfileConfig);
 		LogManager.Configuration = config;
 		BindingPlugins.DataValidators.RemoveAt(0);
 		//if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -71,8 +71,8 @@ public partial class App : Application
 					DataContext = new MainWindowViewModel(),
 					BorderThickness = new(0)
 				};
-				mwindow = (MainWindow)desktop.MainWindow;
-				MainWindowHandle = mwindow.GetHandle();
+				_mwindow = (MainWindow)desktop.MainWindow;
+				MainWindowHandle = _mwindow.GetHandle();
 				nint _ = SetWindowLongPtr(MainWindowHandle, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, (nint)(WINDOW_EX_STYLE.WS_EX_TOPMOST | WINDOW_EX_STYLE.WS_EX_NOREDIRECTIONBITMAP | WINDOW_EX_STYLE.WS_EX_TOOLWINDOW));
 #if RELEASE
 			FunnyStuff.InitLogging();
@@ -105,7 +105,7 @@ public partial class App : Application
 		});
 		ToastNotificationManagerCompat.History.Clear();
 		Console.WriteLine("Notifications started.");
-		logger.Info("Notifications started.");
+		Logger.Info("Notifications started.");
 		ToastContentBuilder toastbuilder = new ToastContentBuilder()
 			.AddText("You need important updates.")
 			.AddText("Windows will install important updates and restart automatically.")
