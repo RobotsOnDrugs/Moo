@@ -3,7 +3,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
-	mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+	mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="450"
 	x:Class="Moo.CustomFakeNotification.MainWindow"
 	Title="You computer in danger!"
 	SystemDecorations="None"
@@ -13,55 +13,39 @@
 	ZIndex="-1"
 	CanResize="False"
 	Background="Transparent"
-	TransparencyLevelHint="Transparent">
+	TransparencyLevelHint="Transparent"
+	>
 	<!-- Corner rounding is done via code-behind in the Activated event handler -->
-		<Grid ShowGridLines="False" Background="#c6c6c6" Opacity="40" ColumnDefinitions="*" RowDefinitions="Auto, Auto, Auto, *">
-			<StackPanel Grid.Column="0" Grid.Row="0" Background="#bb0000">
-				<StackPanel Background="White" IsVisible="False">
-					<Button Name="HelloButton" BorderThickness="0" CornerRadius="0" Background="Gold" Content="Hello" />
-					<TextBlock Background="Aqua" Text="sup" />
-					<TextBlock Padding="10" Text="heyhey" Background="Bisque" Foreground="Black" />
-				</StackPanel>
-			</StackPanel>
-			<StackPanel Grid.Column="2" Grid.Row="1" Opacity="5">
-				<Grid Opacity="999" ShowGridLines="False" ColumnDefinitions="48, *, 30">
-					<StackPanel Grid.Column="1">
-						<TextBlock FontSize="26" Margin="0, 20" Text="You Computer In Danger!" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-						<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...15 hacker found on network..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-						<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...Tinba virus found..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-						<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...koobface virus found..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-						<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...Ilegal pornography from WWW.PORNHUB.NET detected..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Grid>
-			</StackPanel>
-			<StackPanel Background="Green" Grid.Row="3" IsVisible="False">
-				<TextBlock Margin="10" Text="	Test sentence, yo. Gonna write some text. Keep it going, let's make it wrap. More more more yeah." TextWrapping="1" LineHeight="16" FontSize="12" HorizontalAlignment="Right" />
-				<sg:SpacedGrid RowSpacing="10" ColumnSpacing="10" Margin="10" ShowGridLines="False" RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
-
-					<Button Grid.Row="0" Grid.Column="0" Content="Hey Hey" HorizontalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
-
-					<Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-					<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-				</sg:SpacedGrid>
-			</StackPanel>
-			<Grid Grid.Column="3" Grid.Row="3" RowDefinitions="*, *, Auto, Auto" ShowGridLines="False">
-				<StackPanel Grid.Row="0" Margin="0, 20">
-					<TextBlock FontSize="15" Text="Hackers and scammers are currently present on your network" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 0" />
-					<TextBlock FontSize="15" Text="For your safety, we must do a mandatory scan" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 0" />
-					<TextBlock FontSize="15" Text="Do not turn off your computer" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 0" />
-				</StackPanel>
-				
-				<TextBlock Grid.Row="1" Foreground="Red" FontSize="20" Text="Scan initiated, please wait..." HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, 0, 0" />
-				<TextBlock Grid.Row="2" Text="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16, 12, 16, 16" />
-				<ProgressBar Grid.Row="3" IsIndeterminate="True" VerticalAlignment="Bottom" Height="8" CornerRadius="15" />
-			</Grid>
-		
-			<Grid Background="Transparent" Opacity="999" ShowGridLines="False" Grid.Column="0" Grid.Row="0" ColumnDefinitions="48, *, 30">
-				<Image Width="39" Height="36" Grid.Column="1" HorizontalAlignment="Left" Margin="15, 0, 0, 3" Source="avares://Moo.CustomFakeNotification/Assets/260px-Warning.svg.png"></Image>
-				<TextBlock Name="Hackers" Grid.Column="1" Text="Hackers detected!" FontSize="36" Margin="0, 4, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<Image Width="39" Height="36" Grid.Column="1" HorizontalAlignment="Right" Margin="0, 0, 27, 3" Source="avares://Moo.CustomFakeNotification/Assets/260px-Warning.svg.png"></Image>
-				<TextBlock Grid.Column="2" Text="X" HorizontalAlignment="Right" Margin="0, 15, 21, 0" IsVisible="False"/>
-				<Button Grid.Column="2" BorderThickness="2" Background="Transparent" Opacity="99" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Width="25" Height="25" IsVisible="False" />
-			</Grid>
+	<Grid ShowGridLines="False" Background="#c6c6c6" Opacity="40" ColumnDefinitions="*" RowDefinitions="Auto, Auto, *">
+		<StackPanel Grid.Column="0" Grid.Row="0" Background="#bb0000"/>
+		<Grid Background="Transparent" Opacity="999" ShowGridLines="False" Grid.Column="0" Grid.Row="0" ColumnDefinitions="48, *, 30">
+			<Image Width="39" Height="36" Grid.Column="1" HorizontalAlignment="Left" Margin="15, 0, 0, 3" Source="avares://Moo.CustomFakeNotification/Assets/260px-Warning.svg.png"></Image>
+			<TextBlock Name="Hackers" Grid.Column="1" Text="Hackers detected!" FontSize="36" Margin="0, 4, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<Image Width="39" Height="36" Grid.Column="1" HorizontalAlignment="Right" Margin="0, 0, 27, 3" Source="avares://Moo.CustomFakeNotification/Assets/260px-Warning.svg.png"></Image>
+			<TextBlock Grid.Column="2" Text="X" HorizontalAlignment="Right" Margin="0, 15, 21, 0" IsVisible="False"/>
+			<Button Grid.Column="2" BorderThickness="2" Background="Transparent" Opacity="99" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Width="25" Height="25" IsVisible="False" />
 		</Grid>
+		<StackPanel Grid.Row="1" Opacity="5">
+			<Grid Opacity="999" ShowGridLines="False" ColumnDefinitions="48, *, 30">
+				<StackPanel Grid.Column="1">
+					<TextBlock FontSize="26" Margin="0, 20" Text="You Computer In Danger!" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...15 hacker found on network..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+					<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...Tinba virus found..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+					<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...koobface virus found..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+					<TextBlock FontSize="17" FontFamily="Times New Roman" Text="...Ilegal pornography from WWW.PORNHUB.COM detected..." Margin="20,2" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+				</StackPanel>
+			</Grid>
+		</StackPanel>
+		<Grid Grid.Row="2" RowDefinitions="*, *, Auto, Auto" ShowGridLines="False">
+			<StackPanel Grid.Row="0" Margin="0, 20">
+				<TextBlock FontSize="15" Text="Hackers and scammers are currently present on your network" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 0" />
+				<TextBlock FontSize="15" Text="For your safety, we must do a mandatory scan" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 0" />
+				<TextBlock FontSize="15" Text="Do not turn off your computer" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 0" />
+			</StackPanel>
+
+			<TextBlock Grid.Row="1" Foreground="Red" FontSize="20" Text="Scan initiated, please wait..." HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, 0, 0" />
+			<TextBlock Grid.Row="2" Text="" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16, 12, 16, 16" />
+			<ProgressBar Grid.Row="3" IsIndeterminate="True" VerticalAlignment="Bottom" Height="8" CornerRadius="15" />
+		</Grid>
+	</Grid>
 </Window>

@@ -1,3 +1,4 @@
+ClipCursor
 SetWindowLongPtr
 SetWindowPos
 WINDOW_LONG_PTR_INDEX
